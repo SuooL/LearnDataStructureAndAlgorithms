@@ -1,3 +1,6 @@
+// 线性表的顺序存储结构
+// 实际上就是增强的数组类型组合--数组加上一个长度记录
+
 
 #include "stdio.h"
 
@@ -10,7 +13,7 @@
 #define TRUE 1
 #define FALSE 0
 
-#define MAXSIZE 20 /* 存储空间初始分配量 */
+#define MAXSIZE 20
 
 typedef int Status;          /* Status是函数的类型,其值是函数结果状态代码，如OK等 */
 typedef int ElemType;        /* ElemType类型根据实际情况而定，这里假设为int */
@@ -18,24 +21,31 @@ typedef int ElemType;        /* ElemType类型根据实际情况而定，这里�
 
 Status visit(ElemType c)
 {
-    printf("%d ",c);
+    printf("%d\t",c);
     return OK;
 }
 
+// 结构定义
 typedef struct
 {
-	ElemType data[MAXSIZE];        /* 数组，存储数据元素 */
-	int length;                                /* 线性表当前长度 */
+	ElemType data[MAXSIZE];   // 线性表存储位置    
+	int length;               // 线性表的长度记录   
 }SqList;
 
-/* 初始化顺序线性表 */
+/* 
+ *初始化顺序线性表，空 
+ */
 Status InitList(SqList *L)
 {
     L->length=0;
     return OK;
 }
 
-/* 初始条件：顺序线性表L已存在。操作结果：若L为空表，则返回TRUE，否则返回FALSE */
+/* 
+ * 判断线性表是否为空
+ * 初始条件：顺序线性表L已存在。
+ * 操作结果：若L为空表，则返回TRUE，否则返回FALSE 
+ */
 Status ListEmpty(SqList L)
 {
 	if(L.length==0)
@@ -44,33 +54,47 @@ Status ListEmpty(SqList L)
 		return FALSE;
 }
 
-/* 初始条件：顺序线性表L已存在。操作结果：将L重置为空表 */
+/* 
+ * 清空线性表
+ * 初始条件：顺序线性表L已存在。
+ * 操作结果：将L重置为空表 
+ */
 Status ClearList(SqList *L)
 {
     L->length=0;
     return OK;
 }
 
-/* 初始条件：顺序线性表L已存在。操作结果：返回L中数据元素个数 */
+/* 
+ * 查询线性表的长度
+ * 初始条件：顺序线性表L已存在。
+ * 操作结果：返回L中数据元素个数 
+ */
 int ListLength(SqList L)
 {
 	return L.length;
 }
 
-/* 初始条件：顺序线性表L已存在，1≤i≤ListLength(L) */
-/* 操作结果：用e返回L中第i个数据元素的值,注意i是指位置，第1个位置的数组是从0开始 */
+/* 
+ * 获取线性表指定位置的元素
+ * 初始条件：顺序线性表L已存在，1≤i≤ListLength(L) 
+ * 操作结果：用e返回L中第i个数据元素的值,注意i是指位置，第1个位置的数组是从0开始 
+ */
 Status GetElem(SqList L,int i,ElemType *e)
 {
     if(L.length==0 || i<1 || i>L.length)
             return ERROR;
-    *e=L.data[i-1];
 
+    *e=L.data[i-1];
     return OK;
 }
 
-/* 初始条件：顺序线性表L已存在 */
-/* 操作结果：返回L中第1个与e满足关系的数据元素的位序。 */
-/* 若这样的数据元素不存在，则返回值为0 */
+/* 
+ * 定位指定的元素
+ * 初始条件：顺序线性表L已存在
+ * 操作结果：返回L中第1个与e满足关系的数据元素的位序。
+ * 若这样的数据元素不存在，则返回值为0 
+ */
 int LocateElem(SqList L,ElemType e)
 {
     int i;
@@ -88,11 +112,13 @@ int LocateElem(SqList L,ElemType e)
 }
 
 
-/* 初始条件：顺序线性表L已存在,1≤i≤ListLength(L)， */
-/* 操作结果：在L中第i个位置之前插入新的数据元素e，L的长度加1 */
+/* 
+ * 在线性表中插入元素
+ * 初始条件：顺序线性表L已存在,1≤i≤ListLength(L)
+ * 操作结果：在L中第i个位置之前插入新的数据元素e，L的长度加1 
+ */
 Status ListInsert(SqList *L,int i,ElemType e)
 {
-	int k;
 	if (L->length==MAXSIZE)  /* 顺序线性表已经满 */
 		return ERROR;
 	if (i<1 || i>L->length+1)/* 当i比第一位置小或者比最后一位置后一位置还要大时 */
@@ -100,7 +126,7 @@ Status ListInsert(SqList *L,int i,ElemType e)
 
 	if (i<=L->length)        /* 若插入数据位置不在表尾 */
 	{
-		for(k=L->length-1;k>=i-1;k--)  /* 将要插入位置之后的数据元素向后移动一位 */
+		for(int k=L->length-1;k>=i-1;k--)  /* 将要插入位置之后的数据元素向后移动一位 */
 			L->data[k+1]=L->data[k];
 	}
 	L->data[i-1]=e;          /* 将新元素插入 */
@@ -109,11 +135,13 @@ Status ListInsert(SqList *L,int i,ElemType e)
 	return OK;
 }
 
-/* 初始条件：顺序线性表L已存在，1≤i≤ListLength(L) */
-/* 操作结果：删除L的第i个数据元素，并用e返回其值，L的长度减1 */
+/* 
+ * 删除线性表指定位置元素
+ * 初始条件：顺序线性表L已存在，1≤i≤ListLength(L)
+ * 操作结果：删除L的第i个数据元素，并用e返回其值，L的长度减1 
+ */
 Status ListDelete(SqList *L,int i,ElemType *e)
 {
-    int k;
     if (L->length==0)               /* 线性表为空 */
 		return ERROR;
     if (i<1 || i>L->length)         /* 删除位置不正确 */
@@ -121,19 +149,21 @@ Status ListDelete(SqList *L,int i,ElemType *e)
     *e=L->data[i-1];
     if (i<L->length)                /* 如果删除不是最后位置 */
     {
-        for(k=i;k<L->length;k++)/* 将删除位置后继元素前移 */
+        for(int k=i;k<L->length;k++)/* 将删除位置后继元素前移 */
 			L->data[k-1]=L->data[k];
     }
     L->length--;
     return OK;
 }
 
-/* 初始条件：顺序线性表L已存在 */
-/* 操作结果：依次对L的每个数据元素输出 */
+/*
+ * 遍历输出线性表 
+ * 初始条件：顺序线性表L已存在
+ * 操作结果：依次对L的每个数据元素输出 
+ */
 Status ListTraverse(SqList L)
 {
-	int i;
-    for(i=0;i<L.length;i++)
+    for(int i=0;i<L.length;i++)
             visit(L.data[i]);
     printf("\n");
     return OK;
@@ -141,11 +171,10 @@ Status ListTraverse(SqList L)
 
 void unionL(SqList *La,SqList Lb)
 {
-	int La_len,Lb_len,i;
 	ElemType e;
-	La_len=ListLength(*La);
-	Lb_len=ListLength(Lb);
-	for (i=1;i<=Lb_len;i++)
+	int La_len=ListLength(*La);
+	int Lb_len=ListLength(Lb);
+	for (int i=1;i<=Lb_len;i++)
 	{
 		GetElem(Lb,i,&e);
 		if (!LocateElem(*La,e))
